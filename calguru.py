@@ -11,7 +11,7 @@ def index():
 
 @route('/upcoming')
 def upcoming():
-    """Get the upcoming events in Google Calendar"""
+    """Returns json describing next upcoming event in Google Calendar"""
 
     return GoogleCalendarApi.get_next_event()
 
