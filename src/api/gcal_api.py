@@ -6,6 +6,7 @@ from httplib2 import Http
 from oauth2client import file
 from os.path import join, dirname, realpath
 from datetime import datetime, timezone
+from googleapiclient.errors import HttpError
 import src.errors.gcal_errors as gcal_errors
 
 
@@ -69,14 +70,35 @@ class GoogleCalendarApi(object):
         event = {}
         if len(event_list) > 0:
             start = event_list[0]['start'].get('dateTime', event_list[0]['start'].get('date'))
-            event = {'start': start, 'summary': event_list[0]['summary']}
+            event = {'id': event_list[0]['id'], 'start': start, 'summary': event_list[0]['summary']}
         return event
 
     @classmethod
-    def create_event(cls, attendee_emails, summary, start_time, end_time,
-                     send_notifications = True, **kwargs):
+    def get_event(cls, id):
         """
-        Creates a Google Calendar event and returns link to the event.
+        Returns dict containing all information about Google Calendar event with
+        input event id.
+        Returns None if no such event could be found.
+        """
+
+        # Resource object for interacting with Google Calendar API
+        service = cls.get_service()
+
+        try:
+
+            # Retrieve and return event with input event id
+            return service.events().get(calendarId=GoogleCalendarApi.CALENDAR,
+                                        eventId=id).execute()
+        except HttpError:
+
+            # Event with input id couldn't be found, return None
+            return None
+
+    @classmethod
+    def create_event(cls, attendee_emails, summary, start_time, end_time,
+                     send_notifications=True, **kwargs):
+        """
+        Creates a Google Calendar event and returns event's id and link.
 
                          ====Possible kwargs inputs===
 
@@ -90,10 +112,10 @@ class GoogleCalendarApi(object):
         :param kwargs: Supported args:
            'description' = Event description
            'location' = Event location
-        :return: Link to created event.
+        :return: Created event's id and link.
         """
 
-        # All of kwargs' valid keys. Matches Google Calendar API keys in
+        # All of kwargs' valid keys. Matches Google Calendar API keys for
         # insert operation body argument.
         valid_kwargs_keys = ['description', 'location']
 
@@ -125,4 +147,4 @@ class GoogleCalendarApi(object):
             sendNotifications=send_notifications).execute()
 
         # Return link to created event
-        return event.get('htmlLink')
+        return {'id': event.get('id'), 'link': event.get('htmlLink')}

@@ -14,9 +14,13 @@ class GoogleCalenderApiTest(unittest.TestCase):
         Test creating an event via Google Calendar API.
         """
 
-        print(GoogleCalendarApi.create_event(
-            ["nnk1296@gmail.com"], "RC Shift", 1531396253, 1531396253 + 3600 * 5,
-            **{"description": "Test", "location": "MongoDB"}))
+        # print(GoogleCalendarApi.create_event(
+        #     ["nnk1296@gmail.com"], "RC Shift", 1531396253, 1531396253 + 3600 * 5,
+        #     **{"description": "Test", "location": "MongoDB"}))
+
+        # print(GoogleCalendarApi.get_event("1bdc124eu1oo7sdj2qj02sbl94"))
+
+        # print(GoogleCalendarApi.get_next_event())
 
         self.assertTrue(True)
 
