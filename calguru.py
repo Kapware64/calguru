@@ -4,14 +4,17 @@ from src.api.gcal_api import GoogleCalendarApi
 
 @route('/')
 def index():
-    """Home page"""
+    """Home page."""
 
     return "CalGuru"
 
 
 @route('/upcoming')
 def upcoming():
-    """Returns json describing next upcoming event in Google Calendar"""
+    """
+    Returns json describing next upcoming event in Google Calendar.
+    Can be used as simple sanity check for connection to Google Calendar.
+    """
 
     return GoogleCalendarApi.get_next_event()
 
