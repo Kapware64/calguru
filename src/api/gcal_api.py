@@ -23,14 +23,11 @@ class GoogleCalendarApi(object):
     CLIENT_SECRET_DIR = join(dirname(realpath(__file__)),
                              '../../conf/gcal_client_secret.json')
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def get_service():
         """
         Returns Resource object for interacting with Google Calendar
-        API or throws error if valid credentials are not found.
+        API or throws error if valid Google credentials are not found.
         """
 
         # Get credentials
@@ -54,7 +51,7 @@ class GoogleCalendarApi(object):
         # Resource object for interacting with Google Calendar API
         service = cls.get_service()
 
-        # Now in UTC
+        # Present time in UTC
         now = datetime.datetime.utcnow().isoformat() + 'Z'
 
         # Next event in Google Calendar (list of size 0 or 1)
