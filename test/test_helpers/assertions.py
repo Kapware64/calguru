@@ -1,9 +1,9 @@
-"""Assertion helper methods"""
+"""Assertion helper methods."""
 
 
 class Assertions(object):
     """
-    Methods to perform commonly-used assertions; utilized by unittest methods
+    Methods to perform commonly-used assertions; utilized by unittest methods.
     """
 
     @staticmethod
