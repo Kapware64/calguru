@@ -16,11 +16,9 @@ class GoogleCalendarApi(object):
     # Specifies read/write access to Google Calendar
     SCOPE = 'https://www.googleapis.com/auth/calendar'
 
-    # Location of Google Calendar API credential storage
-    CREDENTIALS_DIR = join(dirname(realpath(__file__)),
-                           '../../conf/gcal_credentials.json')
-
-    # Location of Google Calendar API OAuth client secret
+    # Location of Google Calendar API OAuth client secret. The client secret
+    # file specifies the Google Could Platform project
+    # (currently calguru-209820) that CalGuru interfaces with.
     CLIENT_SECRET_DIR = join(dirname(realpath(__file__)),
                              '../../conf/gcal_client_secret.json')
 
@@ -28,15 +26,24 @@ class GoogleCalendarApi(object):
     # 'primary' specifies primary calendar.
     CALENDAR = 'primary'
 
+    # Location of Google Calendar API credential storage. The credentials
+    # file specifies the Google account from which all Google Calendar API
+    # calls are done. It also specifies the credential location for the OAuth
+    # authentication done in gcal_oauth.py.
+    credentials_dir = join(dirname(realpath(__file__)),
+                           '../../conf/gcal_credentials.json')
+
     @staticmethod
     def get_service():
         """
         Returns Resource object for interacting with Google Calendar
         API or throws error if valid Google credentials are not found.
+
+        Looks for credentials in file specified by CREDENTIALS_DIR.
         """
 
         # Get credentials
-        store = file.Storage(GoogleCalendarApi.CREDENTIALS_DIR)
+        store = file.Storage(GoogleCalendarApi.credentials_dir)
         creds = store.get()
 
         # Raise error if credentials are invalid
@@ -74,34 +81,12 @@ class GoogleCalendarApi(object):
         return event
 
     @classmethod
-    def get_event(cls, id):
-        """
-        Returns dict containing all information about Google Calendar event with
-        input event id.
-        Returns None if no such event could be found.
-        """
-
-        # Resource object for interacting with Google Calendar API
-        service = cls.get_service()
-
-        try:
-
-            # Retrieve and return event with input event id
-            return service.events().get(calendarId=GoogleCalendarApi.CALENDAR,
-                                        eventId=id).execute()
-        except HttpError:
-
-            # Event with input id couldn't be found, return None
-            return None
-
-    @classmethod
     def create_event(cls, attendee_emails, summary, start_time, end_time,
                      send_notifications=True, **kwargs):
         """
         Creates a Google Calendar event and returns event's id and link.
 
                          ====Possible kwargs inputs===
-
         :param attendee_emails: Emails of all people attending event.
         :param summary: Event summary.
         :param start_time: UTC timestamp of event starting time.
@@ -114,6 +99,11 @@ class GoogleCalendarApi(object):
            'location' = Event location
         :return: Created event's id and link.
         """
+
+        if start_time >= end_time:
+            raise gcal_errors.InvalidEventTime(
+                "Google Calendar event creation with start time after or equal "
+                "to end time was attempted.")
 
         # All of kwargs' valid keys. Matches Google Calendar API keys for
         # insert operation body argument.
@@ -148,3 +138,39 @@ class GoogleCalendarApi(object):
 
         # Return link to created event
         return {'id': event.get('id'), 'link': event.get('htmlLink')}
+
+    @classmethod
+    def get_event(cls, id):
+        """
+        Returns dict containing all information about Google Calendar event with
+        input event id.
+        Returns None if no such event could be found.
+        """
+
+        # Resource object for interacting with Google Calendar API
+        service = cls.get_service()
+
+        try:
+
+            # Retrieve and return event with input event id
+            return service.events().get(calendarId=GoogleCalendarApi.CALENDAR,
+                                        eventId=id).execute()
+        except HttpError:
+
+            # Event with input id couldn't be found, return None
+            return None
+
+    @classmethod
+    def delete_event(cls, id):
+        """
+        Deletes event with input event id from Google Calendar.
+        Throws googleapiclient.errors.HttpError if event with input id
+        doesn't exist or has already been deleted.
+        """
+
+        # Resource object for interacting with Google Calendar API
+        service = cls.get_service()
+
+        # Delete event with input event id from Google Calendar
+        service.events().delete(calendarId=GoogleCalendarApi.CALENDAR,
+                                eventId=id).execute()
