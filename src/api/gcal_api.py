@@ -1,11 +1,10 @@
 """Methods for interacting with Google Calendar API."""
 
-from __future__ import print_function
+import arrow
 from apiclient import discovery
 from httplib2 import Http
 from oauth2client import file
 from os.path import join, dirname, realpath
-from datetime import datetime, timezone
 from googleapiclient.errors import HttpError
 import src.errors.gcal_errors as gcal_errors
 
@@ -40,6 +39,9 @@ class GoogleCalendarApi(object):
         API or throws error if valid Google credentials are not found.
 
         Looks for credentials in file specified by CREDENTIALS_DIR.
+
+        Used as simple sanity check for connection to Google Calendar.
+        TODO: Remove before deployment.
         """
 
         # Get credentials
@@ -65,7 +67,7 @@ class GoogleCalendarApi(object):
         service = cls.get_service()
 
         # Present time in UTC
-        now = datetime.utcnow().isoformat() + 'Z'
+        now = arrow.utcnow().isoformat() + 'Z'
 
         # Next event in Google Calendar (list of size 0 or 1)
         event_result = service.events().list(calendarId=GoogleCalendarApi.CALENDAR,
@@ -117,20 +119,20 @@ class GoogleCalendarApi(object):
         event = {
             'summary': summary,
             'start': {
-                'dateTime': datetime.fromtimestamp(start_time, timezone.utc).isoformat('T'),
+                'dateTime': arrow.get(start_time).isoformat('T'),  # RFC3339 format
                 'timeZone': 'UTC',
             },
             'end': {
-                'dateTime': datetime.fromtimestamp(end_time, timezone.utc).isoformat('T'),
+                'dateTime': arrow.get(end_time).isoformat('T'),  # RFC3339 format
                 'timeZone': 'UTC',
             }
         }
 
         # Add kwargs args to event
         for key, value in kwargs.items():
-            if value and (key in valid_kwargs_keys):
+            if value and key in valid_kwargs_keys:
                 if key is 'attendees':
-                    value = list(map(lambda x: {'email': x}, value))
+                    value = [{'email': email} for email in value]
                 event[key] = value
 
         # Do the insertion

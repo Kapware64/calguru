@@ -13,7 +13,9 @@ def index():
 def upcoming():
     """
     Returns json describing next upcoming event in Google Calendar.
-    Can be used as simple sanity check for connection to Google Calendar.
+
+    Used as simple sanity check for connection to Google Calendar.
+    TODO: Remove before deployment.
     """
 
     return GoogleCalendarApi.get_next_event()
