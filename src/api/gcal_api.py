@@ -81,13 +81,12 @@ class GoogleCalendarApi(object):
         return event
 
     @classmethod
-    def create_event(cls, attendee_emails, summary, start_time, end_time,
+    def create_event(cls, summary, start_time, end_time,
                      send_notifications=True, **kwargs):
         """
         Creates a Google Calendar event and returns event's id and link.
 
                          ====Possible kwargs inputs===
-        :param attendee_emails: Emails of all people attending event.
         :param summary: Event summary.
         :param start_time: UTC timestamp of event starting time.
         :param end_time: UTC timestamp of event ending time.
@@ -95,6 +94,7 @@ class GoogleCalendarApi(object):
         notifications about creation of event (includes invitations).
         Defaults to true.
         :param kwargs: Supported args:
+           'attendees' = List of attendee emails
            'description' = Event description
            'location' = Event location
         :return: Created event's id and link.
@@ -108,7 +108,7 @@ class GoogleCalendarApi(object):
 
         # All of kwargs' valid keys. Matches Google Calendar API keys for
         # insert operation's body argument.
-        valid_kwargs_keys = ['description', 'location']
+        valid_kwargs_keys = ['description', 'location', 'attendees']
 
         # Resource object for interacting with Google Calendar API
         service = cls.get_service()
@@ -123,13 +123,14 @@ class GoogleCalendarApi(object):
             'end': {
                 'dateTime': datetime.fromtimestamp(end_time, timezone.utc).isoformat('T'),
                 'timeZone': 'UTC',
-            },
-            'attendees': list(map(lambda x: {'email': x}, attendee_emails))
+            }
         }
 
         # Add kwargs args to event
         for key, value in kwargs.items():
             if value and (key in valid_kwargs_keys):
+                if key is 'attendees':
+                    value = list(map(lambda x: {'email': x}, value))
                 event[key] = value
 
         # Do the insertion

@@ -54,16 +54,15 @@ class GoogleCalenderApiTest(unittest.TestCase):
         Assertions.assert_bad_op_error(
             self, GoogleCalendarApi.create_event, gcal_errors.InvalidEventTime,
             "Error: event with invalid start times was successfully created.",
-            **{'attendee_emails': ["test.thecalguru@gmail.com"],
-               'summary': "Test Invalid",
+            **{'summary': "Test Invalid",
                'start_time': utc_timestamp_may_9 + 1 * hour_millis,
                'end_time': utc_timestamp_may_9})
 
         # Create Google Calendar event
         event = GoogleCalendarApi.create_event(
-            ["test.thecalguru@gmail.com"], "Test", utc_timestamp_may_9,
-            utc_timestamp_may_9 + 5 * hour_millis,
-            **{'description': 'A test event', 'location': 'MongoDB'})
+            "Test", utc_timestamp_may_9, utc_timestamp_may_9 + 5 * hour_millis,
+            **{'attendees': ["test.thecalguru@gmail.com"],
+               'description': 'A test event', 'location': 'MongoDB'})
 
         # Created event in Google Calendar
         event_in_cal = GoogleCalendarApi.get_event(event.get('id'))
