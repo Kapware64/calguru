@@ -1,4 +1,4 @@
-"""Test Google Calendar API methods"""
+"""Test Google Calendar API methods."""
 
 import unittest
 import arrow
@@ -13,9 +13,9 @@ class GoogleCalenderApiTest(unittest.TestCase):
     Test gcal_api.py.
     """
 
-    # Google Calendar credentials location pointing to credentials
-    # of main Google account. Used to reassign CREDENTIALS_DIR back to normal
-    # value after it is temporarily changed for testing.
+    # Location of main Google account's Google Calendar API credentials.
+    # Used to reassign CREDENTIALS_DIR back to normal value after it's
+    # temporarily changed for testing.
     MAIN_CREDENTIALS_DIR = GoogleCalendarApi.credentials_dir
 
     def setUp(self):
@@ -46,7 +46,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         # Milliseconds in an hour
         hour_millis = 3600
 
-        # UTC timestamp representing May 9th, 2018 at 10am
+        # UTC timestamp representing 10am, May 9th, 2018
         utc_timestamp_may_9 = 1525860000
 
         # Attempt to create Google Calendar event with invalid times;

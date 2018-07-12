@@ -16,20 +16,20 @@ class GoogleCalendarApi(object):
     # Specifies read/write access to Google Calendar
     SCOPE = 'https://www.googleapis.com/auth/calendar'
 
-    # Location of Google Calendar API OAuth client secret. The client secret
-    # file specifies the Google Could Platform project
-    # (currently calguru-209820) that CalGuru interfaces with.
+    # Location of Google Calendar API OAuth client secret file. This file
+    # specifies the Google Could Platform project (currently calguru-209820)
+    # that CalGuru interfaces with.
     CLIENT_SECRET_DIR = join(dirname(realpath(__file__)),
                              '../../conf/gcal_client_secret.json')
 
-    # Which calendar Google Calendar API calls interface with.
+    # Which calendar Google Calendar API calls access.
     # 'primary' specifies primary calendar.
     CALENDAR = 'primary'
 
-    # Location of Google Calendar API credential storage. The credentials
-    # file specifies the Google account from which all Google Calendar API
-    # calls are done. It also specifies the credential location for the OAuth
-    # authentication done in gcal_oauth.py.
+    # Location of Google Calendar API credentials file. This file specifies
+    # the Google account from which all Google Calendar API calls are made.
+    # It also specifies the credentials location for the OAuth authentication
+    # done in gcal_oauth.py.
     credentials_dir = join(dirname(realpath(__file__)),
                            '../../conf/gcal_credentials.json')
 
@@ -100,13 +100,14 @@ class GoogleCalendarApi(object):
         :return: Created event's id and link.
         """
 
+        # Check if event has invalid times; if so, throw error
         if start_time >= end_time:
             raise gcal_errors.InvalidEventTime(
                 "Google Calendar event creation with start time after or equal "
                 "to end time was attempted.")
 
         # All of kwargs' valid keys. Matches Google Calendar API keys for
-        # insert operation body argument.
+        # insert operation's body argument.
         valid_kwargs_keys = ['description', 'location']
 
         # Resource object for interacting with Google Calendar API
@@ -136,7 +137,7 @@ class GoogleCalendarApi(object):
             calendarId=GoogleCalendarApi.CALENDAR, body=event,
             sendNotifications=send_notifications).execute()
 
-        # Return link to created event
+        # Return created event's id and link
         return {'id': event.get('id'), 'link': event.get('htmlLink')}
 
     @classmethod
@@ -157,7 +158,7 @@ class GoogleCalendarApi(object):
                                         eventId=id).execute()
         except HttpError:
 
-            # Event with input id couldn't be found, return None
+            # Event with input id couldn't be found; return None
             return None
 
     @classmethod
