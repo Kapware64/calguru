@@ -18,6 +18,9 @@ class GoogleCalenderApiTest(unittest.TestCase):
     # temporarily changed for testing.
     MAIN_CREDENTIALS_DIR = GoogleCalendarApi.credentials_dir
 
+    # Milliseconds in an hour
+    HOURS_MILLIS = 3600
+
     def setUp(self):
         """
         Executed before each test.
@@ -38,13 +41,10 @@ class GoogleCalenderApiTest(unittest.TestCase):
         # to credentials of main Google account.
         GoogleCalendarApi.credentials_dir = GoogleCalenderApiTest.MAIN_CREDENTIALS_DIR
 
-    def test_create_event(self):
+    def test_create_get_event(self):
         """
-        Test creating an event via Google Calendar API.
+        Test creating and getting an event via Google Calendar API.
         """
-
-        # Milliseconds in an hour
-        hour_millis = 3600
 
         # UTC timestamp representing 10am, May 9th, 2018
         utc_timestamp_may_9 = 1525860000
@@ -55,16 +55,17 @@ class GoogleCalenderApiTest(unittest.TestCase):
             self, GoogleCalendarApi.create_event, gcal_errors.InvalidEventTime,
             "Error: event with invalid start times was successfully created.",
             **{'summary': "Test Invalid",
-               'start_time': utc_timestamp_may_9 + 1 * hour_millis,
+               'start_time': utc_timestamp_may_9 + 1 * GoogleCalenderApiTest.HOURS_MILLIS,
                'end_time': utc_timestamp_may_9})
 
         # Create Google Calendar event
         event = GoogleCalendarApi.create_event(
-            "Test", utc_timestamp_may_9, utc_timestamp_may_9 + 5 * hour_millis,
+            "Test", utc_timestamp_may_9,
+            utc_timestamp_may_9 + 5 * GoogleCalenderApiTest.HOURS_MILLIS,
             **{'attendees': ["test.thecalguru@gmail.com"],
                'description': 'A test event', 'location': 'MongoDB'})
 
-        # Created event in Google Calendar
+        # Get created event in Google Calendar
         event_in_cal = GoogleCalendarApi.get_event(event.get('id'))
 
         # UTC timestamps of created event in Google Calendar
@@ -76,12 +77,38 @@ class GoogleCalenderApiTest(unittest.TestCase):
                          "test.thecalguru@gmail.com")
         self.assertEqual(event_in_cal.get('summary'), "Test")
         self.assertEqual(start_time_in_cal, utc_timestamp_may_9)
-        self.assertEqual(end_time_in_cal, utc_timestamp_may_9 + 5 * hour_millis)
+        self.assertEqual(
+            end_time_in_cal, utc_timestamp_may_9 + 5 * GoogleCalenderApiTest.HOURS_MILLIS)
         self.assertEqual(event_in_cal.get('description'), "A test event")
         self.assertEqual(event_in_cal.get('location'), "MongoDB")
 
         # Delete created event
         GoogleCalendarApi.delete_event(event.get('id'))
+
+    def test_delete_event(self):
+        """
+        Test deleting an event via Google Calendar API.
+        """
+
+        # UTC timestamp representing 2pm, January 2nd, 2017
+        utc_timestamp_jan_2 = 1483365600
+
+        # Create Google Calendar event
+        event = GoogleCalendarApi.create_event(
+            "Test", utc_timestamp_jan_2,
+            utc_timestamp_jan_2 + 5 * GoogleCalenderApiTest.HOURS_MILLIS,
+            **{'attendees': ["test.thecalguru@gmail.com"],
+               'description': 'A test event', 'location': 'MongoDB'})
+
+        # Delete created event
+        GoogleCalendarApi.delete_event(event.get('id'))
+
+        # Get deleted event in Google Calendar
+        event = GoogleCalendarApi.get_event(event.get('id'))
+
+        # Event's status field should be 'cancelled' if event is not None
+        if event:
+            self.assertEqual('cancelled', event.get('status'))
 
     @staticmethod
     def get_event_timestamps(event):
