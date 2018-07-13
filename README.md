@@ -2,8 +2,8 @@
 
 ## Running app
 * Navigate to project root.
-* Execute `pip3 install -r requirements.txt` to install required packages.
-* Execute `python3 calguru.py` to run app.
+* Execute `pip install -r requirements.txt` to install required packages.
+* Execute `python calguru.py` to run app.
 
 ## Running Tests
 * Ensure you have required packages installed.
