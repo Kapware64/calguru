@@ -93,8 +93,8 @@ class GoogleCalendarApi(object):
         :param start_time: UTC timestamp of event starting time.
         :param end_time: UTC timestamp of event ending time.
         :param send_notifications: Boolean specifying whether to send
-        notifications about creation of event (includes invitations).
-        Defaults to true.
+           notifications about creation of event (includes invitations).
+           Defaults to true.
         :param kwargs: Supported args:
            'attendees' = List of attendee emails
            'description' = Event description
