@@ -1,7 +1,7 @@
 """Methods for interacting with Google Calendar API."""
 
 import arrow
-from apiclient import discovery
+from googleapiclient import discovery
 from httplib2 import Http
 from oauth2client import file
 from os.path import join, dirname, realpath
