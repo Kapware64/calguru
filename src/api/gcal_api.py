@@ -67,7 +67,7 @@ class GoogleCalendarApi(object):
         service = cls.get_service()
 
         # Present time in UTC
-        now = arrow.utcnow().isoformat() + 'Z'
+        now = arrow.utcnow().isoformat('T')
 
         # Next event in Google Calendar (list of size 0 or 1)
         event_result = service.events().list(calendarId=GoogleCalendarApi.CALENDAR,
