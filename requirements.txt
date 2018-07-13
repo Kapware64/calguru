@@ -4,3 +4,5 @@ google-api-python-client==1.7.3
 httplib2==0.11.3
 apiclient==1.0.3
 oauth2client==4.1.2
+nose2==0.7.4
+arrow==0.12.0
