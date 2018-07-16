@@ -14,5 +14,5 @@
 * All Google Calendar API calls are done via a single Google account (currently thecalguru@gmail.com).
 * To change the Google account used for Google Calender API calls, follow these steps:
     * Delete `gcal_credentials.json` in the `conf` folder.
-    * Navigate to the `scripts` folder and run `python gcal_oauth.py` to activate new Google sign-in flow.
+    * Navigate to project root and run `python gcal_oauth.py` to activate new Google sign-in flow.
     * Sign into new Google account.
