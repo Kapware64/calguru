@@ -1,6 +1,6 @@
 """
 Authenticates Google Calendar API credentials and stores them in file specified
-in GoogleCalendarApi.credentials_dir.
+by src/api/gcal_api's GoogleCalendarApi.credentials_dir.
 """
 
 from apiclient import discovery
