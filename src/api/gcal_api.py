@@ -30,7 +30,7 @@ class GoogleCalendarApi(object):
     # It also specifies the credentials location for the OAuth authentication
     # done in gcal_oauth.py.
     credentials_dir = join(dirname(realpath(__file__)),
-                           '../../conf/gcal_credentials.json')
+                           '../../conf/tmp_gcal_credentials.json')
 
     @staticmethod
     def get_service():

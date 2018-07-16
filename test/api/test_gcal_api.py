@@ -48,7 +48,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         """
 
         # UTC timestamp representing 10am, May 9th, 2018
-        utc_timestamp_may_9 = 1525860000
+        utc_timestamp_may_9 = arrow.get(2018, 5, 9, 10).timestamp
 
         # UTC timestamp representing now
         utc_timestamp_now = arrow.utcnow().timestamp
@@ -61,7 +61,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
             self, GoogleCalendarApi.batch_create_events,
             gcal_errors.MissingEventFields,
             "Error: event with missing mandatory fields was successfully created.",
-            **{'events': [event_missing_fields]})
+            **{'event_dicts': [event_missing_fields]})
 
         # Attempt to create Google Calendar event with invalid times;
         # ensure correct error is thrown
@@ -72,7 +72,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         Assertions.assert_bad_op_error(
             self, GoogleCalendarApi.batch_create_events, gcal_errors.InvalidEventTime,
             "Error: event with invalid start times was successfully created.",
-            **{'events': [event_invalid_times]})
+            **{'event_dicts': [event_invalid_times]})
 
         # Valid events to add to Google Calendar
         event_past = {
@@ -127,7 +127,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
                 self.assertTrue(False, msg="Event was created with incorrect summary.")
 
             # Delete created event
-            GoogleCalendarApi.delete_event(event.get('id'))
+            GoogleCalendarApi.delete_event(event_in_cal.get('id'))
 
     def test_delete_event(self):
         """
@@ -135,7 +135,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         """
 
         # UTC timestamp representing 2pm, January 2nd, 2017
-        utc_timestamp_jan_2 = 1483365600
+        utc_timestamp_jan_2 = arrow.get(2017, 1, 2, 14).timestamp
 
         # Event to create
         event = {
