@@ -92,14 +92,14 @@ class GoogleCalenderApiTest(unittest.TestCase):
             'location': 'MongoDB'
         }
 
-        # Batch create Google Calendar events
-        events = GoogleCalendarApi.batch_create_events([event_past, event_future])
+        # Batch create Google Calendar events and store returned events info
+        events_gcal_info = GoogleCalendarApi.batch_create_events([event_past, event_future])
 
-        # Iterate through returned event info of created events
-        for event in events:
+        # Iterate through event info of created events
+        for event_gcal_info in events_gcal_info:
 
             # Get created event in Google Calendar
-            event_in_cal = GoogleCalendarApi.get_event(event.get('id'))
+            event_in_cal = GoogleCalendarApi.get_event(event_gcal_info.get('id'))
 
             # UTC timestamps of created event in Google Calendar
             start_time_in_cal, end_time_in_cal = \
@@ -147,14 +147,14 @@ class GoogleCalenderApiTest(unittest.TestCase):
             'location': 'MongoDB'
         }
 
-        # Create event in Google Calendar
-        gcal_event_info = GoogleCalendarApi.batch_create_events([event])[0]
+        # Create event in Google Calendar and store returned event info
+        event_gcal_info = GoogleCalendarApi.batch_create_events([event])[0]
 
         # Delete created event
-        GoogleCalendarApi.delete_event(gcal_event_info.get('id'))
+        GoogleCalendarApi.delete_event(event_gcal_info.get('id'))
 
         # Get deleted event in Google Calendar
-        deleted_event = GoogleCalendarApi.get_event(gcal_event_info.get('id'))
+        deleted_event = GoogleCalendarApi.get_event(event_gcal_info.get('id'))
 
         # Event's status field should be 'cancelled' if event is not None
         if deleted_event:
