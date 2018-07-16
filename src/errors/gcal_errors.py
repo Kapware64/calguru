@@ -21,3 +21,11 @@ class InvalidEventTime(GoogleCalendarError):
     """
 
     pass
+
+
+class MissingEventFields(GoogleCalendarError):
+    """
+    There was an attempt to create an event with missing mandatory fields.
+    """
+
+    pass
