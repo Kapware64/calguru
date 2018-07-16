@@ -1,7 +1,6 @@
 """Methods for interacting with Google Calendar API."""
 
 import arrow
-from functools import reduce
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 from httplib2 import Http
