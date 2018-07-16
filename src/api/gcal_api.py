@@ -83,14 +83,14 @@ class GoogleCalendarApi(object):
         return event
 
     @classmethod
-    def batch_create_events(cls, events, send_notifications=True):
+    def batch_create_events(cls, event_dicts, send_notifications=True):
         """
         Creates Google Calendar events and returns list of dicts containing
         events' ids, summaries, and links.
 
-        :param events: List of dicts, where each dict specifies an event.
-           The following dict keys are supported for each event (keys
-           match Google Calendar API keys for event creation):
+        :param event_dicts: List of dicts, where each dict specifies an event.
+           The following dict keys are supported (keys match Google Calendar API
+           keys for event creation):
            'summary': Event summary. Required.
            'start': UTC timestamp of event starting time. Required.
            'end': UTC timestamp of event ending time. Required.
@@ -104,10 +104,10 @@ class GoogleCalendarApi(object):
            links.
         """
 
-        # Mandatory fields that need to be specified for each event.
+        # Mandatory fields that need to be specified for each event
         mandatory_event_fields = ['summary', 'start', 'end']
 
-        # All valid event fields supported in batch_create_events.
+        # All valid event fields supported in batch_create_events
         all_event_fields = mandatory_event_fields + ['description', 'location', 'attendees']
 
         # Resource object for interacting with Google Calendar API
@@ -126,24 +126,24 @@ class GoogleCalendarApi(object):
         batch = service.new_batch_http_request(callback=event_created)
 
         # Iterate through each input event dict
-        for event_dict in events:
+        for event_dict in event_dicts:
 
-            # Mandatory event fields aren't all specified for this event; raise error
+            # Mandatory event fields aren't all specified for input event dict; raise error
             if not set(mandatory_event_fields).issubset(set(event_dict.keys())):
                 raise gcal_errors.MissingEventFields(
                     "Mandatory fields (summary, start time, and end time) "
                     "weren't all specified for event.")
 
-            # Event has invalid times; raise error
+            # Input event dict has invalid times; raise error
             if event_dict.get('start') >= event_dict.get('end'):
                 raise gcal_errors.InvalidEventTime(
                     "Google Calendar event creation with start time after or "
                     "equal to end time was attempted.")
 
             # Event to be added to Google Calendar
-            event = {}
+            gcal_event = {}
 
-            # Add fields to event
+            # Add fields to gcal_event
             for key, value in event_dict.items():
                 if value and key in all_event_fields:
                     if key is 'attendees':
@@ -153,11 +153,11 @@ class GoogleCalendarApi(object):
                             'dateTime': arrow.get(value).isoformat('T'),  # RFC3339 format
                             'timeZone': 'UTC',
                         }
-                    event[key] = value
+                    gcal_event[key] = value
 
-            # Add create event operation for current event to batch operation
+            # Add create event operation to batch operation
             batch.add(service.events().insert(
-                calendarId=GoogleCalendarApi.CALENDAR, body=event,
+                calendarId=GoogleCalendarApi.CALENDAR, body=gcal_event,
                 sendNotifications=send_notifications))
 
         # Batch create events (batch.execute() will call event_created for every
