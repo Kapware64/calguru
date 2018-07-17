@@ -21,7 +21,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
     # The main calendar gcal_api.py accesses.
     # Used to reassign GoogleCalendarApi.calendar back to its normal value after
     # it's temporarily changed for testing.
-    MAIN_CALENDAR = GoogleCalendarApi.calendar
+    MAIN_CALENDAR = GoogleCalendarApi.calendar_id
 
     # Milliseconds in an hour
     HOURS_MILLIS = 3600
@@ -40,7 +40,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         # purposes.
         # 'primary' means the primary calendar of the Google service account
         # being used.
-        GoogleCalendarApi.calendar = 'primary'
+        GoogleCalendarApi.calendar_id = 'primary'
 
     def tearDown(self):
         """
@@ -51,7 +51,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         GoogleCalendarApi.credentials_dir = GoogleCalenderApiTest.MAIN_CREDENTIALS_DIR
 
         # Change the calendar gcal_api.py accesses back to main calendar.
-        GoogleCalendarApi.calendar = GoogleCalenderApiTest.MAIN_CALENDAR
+        GoogleCalendarApi.calendar_id = GoogleCalenderApiTest.MAIN_CALENDAR
 
     def test_batch_create_get_event(self):
         """
