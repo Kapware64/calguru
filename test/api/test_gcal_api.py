@@ -13,13 +13,13 @@ class GoogleCalenderApiTest(unittest.TestCase):
     Test gcal_api.py.
     """
 
-    # Location of main Google account's Google Calendar API credentials.
-    # Used to reassign GoogleCalendarApi.service_account_dir back to normal
+    # Location of main Google service account's credentials.
+    # Used to reassign GoogleCalendarApi.service_account_dir back to its normal
     # value after it's temporarily changed for testing.
     MAIN_CREDENTIALS_DIR = GoogleCalendarApi.service_account_dir
 
-    # The main calendar Google Calendar API calls access.
-    # Used to reassign GoogleCalendarApi.calendar back to normal value after
+    # The main calendar gcal_api.py accesses.
+    # Used to reassign GoogleCalendarApi.calendar back to its normal value after
     # it's temporarily changed for testing.
     MAIN_CALENDAR = GoogleCalendarApi.calendar
 
@@ -31,14 +31,13 @@ class GoogleCalenderApiTest(unittest.TestCase):
         Executed before each test.
         """
 
-        # Temporarily change Google service account credentials directory
-        # location to use credentials of Google service account utilized just
-        # for testing.
+        # Temporarily change Google service account credentials for testing
+        # purposes.
         GoogleCalendarApi.service_account_dir = \
             join(dirname(realpath(__file__)), '../../conf/test_gcal_service_account.json')
 
-        # Temporarily change the calendar Google Calendar API calls access for
-        # testing purposes.
+        # Temporarily change the calendar gcal_api.py accesses for testing
+        # purposes.
         # 'primary' means the primary calendar of the Google service account
         # being used.
         GoogleCalendarApi.calendar = 'primary'
@@ -48,12 +47,10 @@ class GoogleCalenderApiTest(unittest.TestCase):
         Executed after each test.
         """
 
-        # Change Google Calendar credentials directory location to point back
-        # to credentials of main Google service account.
+        # Change Google service account credentials back to main service account.
         GoogleCalendarApi.credentials_dir = GoogleCalenderApiTest.MAIN_CREDENTIALS_DIR
 
-        # Change the calendar Google Calendar API calls access back to the main
-        # calendar.
+        # Change the calendar gcal_api.py accesses back to main calendar.
         GoogleCalendarApi.calendar = GoogleCalenderApiTest.MAIN_CALENDAR
 
     def test_batch_create_get_event(self):
