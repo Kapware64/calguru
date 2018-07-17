@@ -20,3 +20,19 @@ interfaces with are both specified via the `gcal_service_account.json` file.
         * Download its private key in json format.
         * Replace `gcal_service_account.json` with downloaded file.
         * More information available here: https://developers.google.com/identity/protocols/OAuth2ServiceAccount
+
+## Configuring Calendars
+* All Google Calendar API calls currently access the calendar with id
+`GoogleCalendarApi.calendar_id`. To change this:
+    * Ensure CalGuru's Google service account has read/write access to a new
+    calendar.
+        * This can be done in the Google Calendar UI by sharing a Google
+        Calendar with the service account's email address.
+            * Read/write access must be specified when sharing.
+            * The service account's email address can be found in
+            `gcal_service_account.json`.
+        * This can also be done by having the service account create its own
+        Google Calendar.
+            * Google Calendar API is required for this. Can use this API endpoint:
+            https://developers.google.com/calendar/v3/reference/calendars/insert.
+    * Replace `GoogleCalendarApi.calendar_id` with new calendar's id.

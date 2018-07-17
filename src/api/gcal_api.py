@@ -14,9 +14,9 @@ class GoogleCalendarApi(object):
     # Specifies read/write access to Google Calendar via service account
     SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-    # Which calendar Google Calendar API calls access.
-    # Currently a shared CalGuru calendar available for all of 10gen.
-    calendar = '10gen.com_47lb7vo9hdk6ir0jeljs2u8kak@group.calendar.google.com'
+    # id of calendar that Google Calendar API calls access.
+    # Every calendar in Google Calendar has a unique id.
+    calendar_id = '9bd42tmt32q8sk200sappvmm6s@group.calendar.google.com'
 
     # Location of Google Calendar API service account credentials. This file
     # specifies the Google Could Platform project (currently calguru-210514)
@@ -58,7 +58,7 @@ class GoogleCalendarApi(object):
         now = arrow.utcnow().isoformat('T')
 
         # Next event in Google Calendar (list of size 0 or 1)
-        event_result = service.events().list(calendarId=GoogleCalendarApi.calendar,
+        event_result = service.events().list(calendarId=GoogleCalendarApi.calendar_id,
                                              timeMin=now, maxResults=1, singleEvents=True,
                                              orderBy='startTime').execute()
         event_list = event_result.get('items', [])
@@ -145,7 +145,7 @@ class GoogleCalendarApi(object):
 
             # Add create event operation to batch operation
             batch.add(service.events().insert(
-                calendarId=GoogleCalendarApi.calendar, body=gcal_event,
+                calendarId=GoogleCalendarApi.calendar_id, body=gcal_event,
                 sendNotifications=send_notifications))
 
         # Batch create events (batch.execute() will call event_created for every
@@ -169,7 +169,7 @@ class GoogleCalendarApi(object):
         try:
 
             # Retrieve and return event with input event id
-            return service.events().get(calendarId=GoogleCalendarApi.calendar,
+            return service.events().get(calendarId=GoogleCalendarApi.calendar_id,
                                         eventId=id).execute()
         except HttpError:
 
@@ -188,5 +188,5 @@ class GoogleCalendarApi(object):
         service = cls.get_service()
 
         # Delete event with input event id from Google Calendar
-        service.events().delete(calendarId=GoogleCalendarApi.calendar,
+        service.events().delete(calendarId=GoogleCalendarApi.calendar_id,
                                 eventId=id).execute()
