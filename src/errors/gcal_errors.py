@@ -4,8 +4,8 @@
 class GoogleCalendarError(Exception):
     """All google calendar errors."""
 
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, application_message):
+        self.message = application_message
 
 
 class BadCredentials(GoogleCalendarError):
