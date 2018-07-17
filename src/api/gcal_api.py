@@ -3,8 +3,7 @@
 import arrow
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
-from httplib2 import Http
-from oauth2client import file
+from google.oauth2 import service_account
 from os.path import join, dirname, realpath
 import src.errors.gcal_errors as gcal_errors
 
@@ -12,25 +11,18 @@ import src.errors.gcal_errors as gcal_errors
 class GoogleCalendarApi(object):
     """All methods for interacting with Google Calendar API."""
 
-    # Specifies read/write access to Google Calendar
-    SCOPE = 'https://www.googleapis.com/auth/calendar'
-
-    # Location of Google Calendar API OAuth client secret file. This file
-    # specifies the Google Could Platform project (currently calguru-209820)
-    # that CalGuru interfaces with.
-    CLIENT_SECRET_DIR = join(dirname(realpath(__file__)),
-                             '../../conf/gcal_client_secret.json')
+    # Specifies read/write access to Google Calendar via service account
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
 
     # Which calendar Google Calendar API calls access.
-    # 'primary' specifies primary calendar.
-    CALENDAR = 'primary'
+    # Currently a shared CalGuru calendar available for all of 10gen.
+    calendar = '10gen.com_47lb7vo9hdk6ir0jeljs2u8kak@group.calendar.google.com'
 
-    # Location of Google Calendar API credentials file. This file specifies
-    # the Google account from which all Google Calendar API calls are made.
-    # It also specifies the credentials location for the OAuth authentication
-    # done in gcal_oauth.py.
-    credentials_dir = join(dirname(realpath(__file__)),
-                           '../../conf/tmp_gcal_credentials.json')
+    # Location of Google Calendar API service account credentials. This file
+    # specifies the Google Could Platform project (currently calguru-210514)
+    # and the Google service account that CalGuru interfaces with.
+    service_account_dir = join(dirname(realpath(__file__)),
+                               '../../conf/gcal_service_account.json')
 
     @staticmethod
     def get_service():
@@ -41,17 +33,13 @@ class GoogleCalendarApi(object):
         Looks for credentials in file specified by CREDENTIALS_DIR.
         """
 
-        # Get credentials
-        store = file.Storage(GoogleCalendarApi.credentials_dir)
-        creds = store.get()
-
-        # Raise error if credentials are invalid
-        if not creds or creds.invalid:
-            raise gcal_errors.BadCredentials(
-                "Valid credentials could not be found for Google Calendar API")
+        # Get Google service account credentials
+        credentials = service_account.Credentials.from_service_account_file(
+            GoogleCalendarApi.service_account_dir,
+            scopes=GoogleCalendarApi.SCOPES)
 
         # Return Resource object
-        return discovery.build('calendar', 'v3', http=creds.authorize(Http()),
+        return discovery.build('calendar', 'v3', credentials=credentials,
                                cache_discovery=False)
 
     @classmethod
@@ -70,7 +58,7 @@ class GoogleCalendarApi(object):
         now = arrow.utcnow().isoformat('T')
 
         # Next event in Google Calendar (list of size 0 or 1)
-        event_result = service.events().list(calendarId=GoogleCalendarApi.CALENDAR,
+        event_result = service.events().list(calendarId=GoogleCalendarApi.calendar,
                                              timeMin=now, maxResults=1, singleEvents=True,
                                              orderBy='startTime').execute()
         event_list = event_result.get('items', [])
@@ -157,7 +145,7 @@ class GoogleCalendarApi(object):
 
             # Add create event operation to batch operation
             batch.add(service.events().insert(
-                calendarId=GoogleCalendarApi.CALENDAR, body=gcal_event,
+                calendarId=GoogleCalendarApi.calendar, body=gcal_event,
                 sendNotifications=send_notifications))
 
         # Batch create events (batch.execute() will call event_created for every
@@ -181,7 +169,7 @@ class GoogleCalendarApi(object):
         try:
 
             # Retrieve and return event with input event id
-            return service.events().get(calendarId=GoogleCalendarApi.CALENDAR,
+            return service.events().get(calendarId=GoogleCalendarApi.calendar,
                                         eventId=id).execute()
         except HttpError:
 
@@ -200,5 +188,5 @@ class GoogleCalendarApi(object):
         service = cls.get_service()
 
         # Delete event with input event id from Google Calendar
-        service.events().delete(calendarId=GoogleCalendarApi.CALENDAR,
+        service.events().delete(calendarId=GoogleCalendarApi.calendar,
                                 eventId=id).execute()
