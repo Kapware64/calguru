@@ -19,7 +19,8 @@
 * All Google Calender API calls made by CalGuru are via the service account
 specified in `gcal_service_account.json`, located in the `conf` folder.
 `gcal_service_account.json` contains all of the service account's necessary
-OAuth credentials (including its private key).
+OAuth credentials (including its private key) for making authenticated Google
+Calendar API requests.
 * You can change the service account CalGuru uses by doing the following:
     * Create a new Google service account.
     * Download its private key in json format.
