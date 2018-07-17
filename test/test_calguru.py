@@ -5,7 +5,7 @@ from webtest import TestApp
 
 
 class CalGuruTest(unittest.TestCase):
-    """Test user_res.py"""
+    """Test calguru.py"""
 
     # Milliseconds in an hour
     HOURS_MILLIS = 3600
@@ -15,7 +15,7 @@ class CalGuruTest(unittest.TestCase):
 
         self.app = TestApp(calguru)
 
-    def test_create_gcal_events(self):
+    def tst_create_gcal_events(self):
         """Test we can add event via POST /gcal_events REST API endpoint"""
 
         # UTC timestamp representing 2pm, January 2nd, 2017
@@ -49,3 +49,6 @@ class CalGuruTest(unittest.TestCase):
 
         # Assert failed status code
         self.assertEqual(invalid_resp.status_code, 400)
+
+    if __name__ == "__main__":
+        unittest.main()
