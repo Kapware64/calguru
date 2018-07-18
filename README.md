@@ -10,9 +10,19 @@
 * Navigate to project root.
 * Run `nose2 -v`.
 
-## Configuring Google Calendar API
-* All Google Calendar API calls are done via a single Google account (currently thecalguru@gmail.com).
-* To change the Google account used for Google Calender API calls, follow these steps:
-    * Delete `gcal_credentials.json` in the `conf` folder.
-    * Navigate to project root and run `python gcal_oauth.py` to activate new Google sign-in flow.
-    * Sign into new Google account.
+## Google Calendar API Authentication
+* Background: A service account is a special Google account that belongs to an
+    application instead of a user. Each service account is associated with a
+    public-private key pair, which is managed by Google Cloud Platform. This key
+    pair is what CalGuru uses to make authenticated requests to the Google
+    Calendar API.
+* All Google Calender API calls made by CalGuru are via the service account
+specified in `gcal_service_account.json`, located in the `conf` folder.
+`gcal_service_account.json` contains all of the service account's necessary
+OAuth credentials (including its private key) for making authenticated Google
+Calendar API requests.
+* You can change the service account CalGuru uses by doing the following:
+    * Create a new Google service account.
+    * Download its private key in json format.
+    * Replace `gcal_service_account.json` with downloaded file.
+    * More information available here: https://developers.google.com/identity/protocols/OAuth2ServiceAccount
