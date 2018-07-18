@@ -6,7 +6,7 @@ from os.path import join, dirname, realpath
 
 
 class TestUtils(object):
-    """Object for implementing unit test utility methods."""
+    """Class for implementing unit test utility methods."""
 
     # Location of main Google service account's credentials.
     # Used to reassign GoogleCalendarApi.service_account_dir back to its normal

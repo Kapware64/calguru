@@ -32,8 +32,8 @@ Calendar API requests.
 `GoogleCalendarApi.calendar_id`. To change this:
     * Find a new calendar and ensure CalGuru's Google service account has
     read/write access to it.
-        * This can be done in the Google Calendar UI by sharing a Google
-        Calendar with the service account's email address.
+        * This can be done in the Google Calendar UI by sharing a calendar
+         with the service account's email address.
             * Read/write access must be specified when sharing.
             * The service account's email address can be found in
             `gcal_service_account.json`.

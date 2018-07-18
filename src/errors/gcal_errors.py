@@ -1,9 +1,9 @@
 """Google calendar errors."""
 
-from src.errors.application_error import ApplicationError
+from src.errors.calguru_error import CalGuruError
 
 
-class GoogleCalendarError(ApplicationError):
+class GoogleCalendarError(CalGuruError):
     """All google calendar errors."""
 
     pass
