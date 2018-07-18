@@ -3,6 +3,7 @@
 from bottle import response
 import bson
 import bson.json_util
+from src.errors.application_error import ApplicationError
 
 
 class APIUtils(object):
@@ -27,7 +28,7 @@ class APIUtils(object):
 
             # Except any errors and call failure
             except Exception as err:
-                APIUtils.failure(err)
+                return APIUtils.failure(err)
 
         return make_request
 
@@ -48,17 +49,16 @@ class APIUtils(object):
     def failure(error):
         """ Method for returning failed API Request"""
 
-        # If error has application_message attribute (this attribute is included
-        # for all errors in the errors folder).
-        if hasattr(error, "application_message"):
-            ret = {'status': 'error', 'message': error.application_message}
+        # If error is custom error thrown by application
+        if isinstance(error, ApplicationError):
+            ret = {'status': 'error', 'message': error.message}
 
-            # We know application has failed a check and thrown a custom error.
-            # Set response status for client-side error.
+            # We know application has failed a check and thrown a custom error;
+            # set response status for client making a bad request
             response.status = 400
 
         else:
-            ret = {'status': 'error', 'message': error}
+            ret = {'status': 'error', 'message': str(error)}
 
             # Set response status for internal service error
             response.status = 500

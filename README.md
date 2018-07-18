@@ -39,6 +39,6 @@ Calendar API requests.
             `gcal_service_account.json`.
         * This can also be done by having the service account create its own
         Google Calendar.
-            * Google Calendar API is required for this. You can use this APIe endpoint:
+            * Google Calendar API is required for this. You can use this API endpoint:
             https://developers.google.com/calendar/v3/reference/calendars/insert.
     * Replace `GoogleCalendarApi.calendar_id` with new calendar's id.

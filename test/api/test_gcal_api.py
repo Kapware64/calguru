@@ -2,9 +2,9 @@
 
 import unittest
 import arrow
-from os.path import join, dirname, realpath
 from src.api.gcal_api import GoogleCalendarApi
 from test.test_helpers.assertions import Assertions
+from test.test_helpers.test_utils import TestUtils
 import src.errors.gcal_errors as gcal_errors
 
 
@@ -13,45 +13,17 @@ class GoogleCalenderApiTest(unittest.TestCase):
     Test gcal_api.py.
     """
 
-    # Location of main Google service account's credentials.
-    # Used to reassign GoogleCalendarApi.service_account_dir back to its normal
-    # value after it's temporarily changed for testing.
-    MAIN_CREDENTIALS_DIR = GoogleCalendarApi.service_account_dir
-
-    # The main calendar gcal_api.py accesses.
-    # Used to reassign GoogleCalendarApi.calendar back to its normal value after
-    # it's temporarily changed for testing.
-    MAIN_CALENDAR = GoogleCalendarApi.calendar_id
-
-    # Milliseconds in an hour
-    HOURS_MILLIS = 3600
-
     def setUp(self):
-        """
-        Executed before each test.
-        """
+        """Executed before each test."""
 
-        # Temporarily change Google service account credentials for testing
-        # purposes.
-        GoogleCalendarApi.service_account_dir = \
-            join(dirname(realpath(__file__)), '../../conf/test_gcal_service_account.json')
-
-        # Temporarily change the calendar gcal_api.py accesses for testing
-        # purposes.
-        # 'primary' means the primary calendar of the Google service account
-        # being used.
-        GoogleCalendarApi.calendar_id = 'primary'
+        # Change GoogleCalendarApi class attributes for testing purposes
+        TestUtils.configure_gcal_for_testing()
 
     def tearDown(self):
-        """
-        Executed after each test.
-        """
+        """Executed after each test."""
 
-        # Change Google service account credentials back to main service account.
-        GoogleCalendarApi.credentials_dir = GoogleCalenderApiTest.MAIN_CREDENTIALS_DIR
-
-        # Change the calendar gcal_api.py accesses back to main calendar.
-        GoogleCalendarApi.calendar_id = GoogleCalenderApiTest.MAIN_CALENDAR
+        # Change GoogleCalendarApi class attributes back to their normal values
+        TestUtils.configure_gcal_main()
 
     def test_batch_create_get_event(self):
         """
@@ -79,7 +51,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         # ensure correct error is thrown
         event_invalid_times = \
             {'summary': "Test Invalid",
-             'start': utc_timestamp_may_9 + 1 * GoogleCalenderApiTest.HOURS_MILLIS,
+             'start': utc_timestamp_may_9 + 1 * TestUtils.HOURS_MILLIS,
              'end': utc_timestamp_may_9}
         Assertions.assert_bad_op_error(
             self, GoogleCalendarApi.batch_create_events, gcal_errors.InvalidEventTime,
@@ -90,15 +62,15 @@ class GoogleCalenderApiTest(unittest.TestCase):
         event_past = {
             'summary': "Test 1",
             'start': utc_timestamp_may_9,
-            'end': utc_timestamp_may_9 + 5 * GoogleCalenderApiTest.HOURS_MILLIS,
+            'end': utc_timestamp_may_9 + 5 * TestUtils.HOURS_MILLIS,
             'attendees': ["test.thecalguru@gmail.com"],
             'description': 'A test event #1',
             'location': 'MongoDB'
         }
         event_future = {
             'summary': "Test 2",
-            'start': utc_timestamp_now + 2 * GoogleCalenderApiTest.HOURS_MILLIS,
-            'end': utc_timestamp_now + 7 * GoogleCalenderApiTest.HOURS_MILLIS,
+            'start': utc_timestamp_now + 2 * TestUtils.HOURS_MILLIS,
+            'end': utc_timestamp_now + 7 * TestUtils.HOURS_MILLIS,
             'attendees': ["test.thecalguru@gmail.com"],
             'description': 'A test event #2',
             'location': 'MongoDB'
@@ -115,7 +87,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
 
             # UTC timestamps of created event in Google Calendar
             start_time_in_cal, end_time_in_cal = \
-                GoogleCalenderApiTest.get_event_timestamps(event_in_cal)
+                TestUtils.get_gcal_event_timestamps(event_in_cal)
 
             # Ensure created event is correct
             if event_in_cal.get('summary') == "Test 1":
@@ -123,16 +95,16 @@ class GoogleCalenderApiTest(unittest.TestCase):
                                  "test.thecalguru@gmail.com")
                 self.assertEqual(start_time_in_cal, utc_timestamp_may_9)
                 self.assertEqual(
-                    end_time_in_cal, utc_timestamp_may_9 + 5 * GoogleCalenderApiTest.HOURS_MILLIS)
+                    end_time_in_cal, utc_timestamp_may_9 + 5 * TestUtils.HOURS_MILLIS)
                 self.assertEqual(event_in_cal.get('description'), "A test event #1")
                 self.assertEqual(event_in_cal.get('location'), "MongoDB")
             elif event_in_cal.get('summary') == "Test 2":
                 self.assertEqual(event_in_cal.get('attendees')[0].get('email'),
                                  "test.thecalguru@gmail.com")
                 self.assertEqual(
-                    start_time_in_cal, utc_timestamp_now + 2 * GoogleCalenderApiTest.HOURS_MILLIS)
+                    start_time_in_cal, utc_timestamp_now + 2 * TestUtils.HOURS_MILLIS)
                 self.assertEqual(
-                    end_time_in_cal, utc_timestamp_now + 7 * GoogleCalenderApiTest.HOURS_MILLIS)
+                    end_time_in_cal, utc_timestamp_now + 7 * TestUtils.HOURS_MILLIS)
                 self.assertEqual(event_in_cal.get('description'), "A test event #2")
                 self.assertEqual(event_in_cal.get('location'), "MongoDB")
             else:
@@ -153,7 +125,7 @@ class GoogleCalenderApiTest(unittest.TestCase):
         event = {
             'summary': "Test",
             'start': utc_timestamp_jan_2,
-            'end': utc_timestamp_jan_2 + 5 * GoogleCalenderApiTest.HOURS_MILLIS,
+            'end': utc_timestamp_jan_2 + 5 * TestUtils.HOURS_MILLIS,
             'attendees': ["test.thecalguru@gmail.com"],
             'description': 'A test event',
             'location': 'MongoDB'
@@ -171,24 +143,6 @@ class GoogleCalenderApiTest(unittest.TestCase):
         # Event's status field should be 'cancelled' if event is not None
         if deleted_event:
             self.assertEqual('cancelled', deleted_event.get('status'))
-
-    @staticmethod
-    def get_event_timestamps(event):
-        """
-        Returns an input event's start and end times as UTC timestamps.
-        """
-
-        start_time = arrow.get(event.get('start').get('dateTime'))
-        start_time_timezone = event.get('start').get('timeZone')
-        if start_time_timezone:
-            start_time.replace(tzinfo=start_time_timezone)
-
-        end_time = arrow.get(event.get('end').get('dateTime'))
-        end_time_timezone = event.get('end').get('timeZone')
-        if end_time_timezone:
-            end_time.replace(tzinfo=end_time_timezone)
-
-        return start_time.timestamp, end_time.timestamp
 
     if __name__ == "__main__":
         unittest.main()
