@@ -27,24 +27,12 @@ def create_gcal_events():
     Output: Created events' ids, summaries, and links in json.
     """
 
-    # Create events and store Google Calendar info of created events'
+    # Create events and store Google Calendar info of created events
     gcal_events_info = GoogleCalendarApi.batch_create_events(
         APIUtils.get_body(request)['events'])
 
     # Return created events' ids, summaries, and links
     return {'calendar_events': gcal_events_info}
-
-
-@route('/upcoming')
-def upcoming():
-    """
-    Returns json describing next upcoming event in Google Calendar.
-
-    Used as simple sanity check for connection to Google Calendar.
-    TODO: Remove before deployment.
-    """
-
-    return GoogleCalendarApi.get_next_event()
 
 
 # Initialize main app
@@ -56,5 +44,5 @@ app.post("/gcal/events", callback=create_gcal_events)
 
 if __name__ == '__main__':
 
-    # Should match valid redirect uris in OAuth client secret files
+    # Run the application
     run(host='localhost', port=8080, debug=True)

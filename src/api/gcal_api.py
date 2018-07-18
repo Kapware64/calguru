@@ -18,8 +18,9 @@ class GoogleCalendarApi(object):
     # Every calendar in Google Calendar has a unique id.
     calendar_id = '9bd42tmt32q8sk200sappvmm6s@group.calendar.google.com'
 
-    # Location of Google Calendar API service account credentials. This file
-    # specifies the Google service account that CalGuru interfaces with.
+    # Location of Google service account credentials file. This file specifies
+    # the Google service account that CalGuru uses for making authenticated
+    # calls to Google Calendar API.
     service_account_dir = join(dirname(realpath(__file__)),
                                '../../conf/gcal_service_account.json')
 
@@ -40,34 +41,6 @@ class GoogleCalendarApi(object):
         # Return Resource object
         return discovery.build('calendar', 'v3', credentials=credentials,
                                cache_discovery=False)
-
-    @classmethod
-    def get_next_event(cls):
-        """
-        Retrieves dict representing next event in Google Calendar.
-
-        Used as simple sanity check for connection to Google Calendar.
-        TODO: Remove before deployment.
-        """
-
-        # Resource object for interacting with Google Calendar API
-        service = cls.get_service()
-
-        # Present time in UTC
-        now = arrow.utcnow().isoformat('T')
-
-        # Next event in Google Calendar (list of size 0 or 1)
-        event_result = service.events().list(calendarId=GoogleCalendarApi.calendar_id,
-                                             timeMin=now, maxResults=1, singleEvents=True,
-                                             orderBy='startTime').execute()
-        event_list = event_result.get('items', [])
-
-        # Create event to return
-        event = {}
-        if len(event_list) > 0:
-            start = event_list[0]['start'].get('dateTime', event_list[0]['start'].get('date'))
-            event = {'id': event_list[0]['id'], 'start': start, 'summary': event_list[0]['summary']}
-        return event
 
     @classmethod
     def batch_create_events(cls, event_dicts, send_notifications=True):
