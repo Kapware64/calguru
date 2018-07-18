@@ -1,11 +1,12 @@
 """Google calendar errors."""
 
+from src.errors.application_error import ApplicationError
 
-class GoogleCalendarError(Exception):
+
+class GoogleCalendarError(ApplicationError):
     """All google calendar errors."""
 
-    def __init__(self, application_message):
-        self.message = application_message
+    pass
 
 
 class InvalidEventTime(GoogleCalendarError):

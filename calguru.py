@@ -27,7 +27,7 @@ def create_gcal_events():
     Output: Created events' ids, summaries, and links in json.
     """
 
-    # Create events and store Google Calendar info of created events
+    # Create events and store Google Calendar info of created events'
     gcal_events_info = GoogleCalendarApi.batch_create_events(
         APIUtils.get_body(request)['events'])
 
@@ -47,8 +47,14 @@ def upcoming():
     return GoogleCalendarApi.get_next_event()
 
 
-# Route for creating Google Calendar events
-Bottle().post("/gcal/events", callback=create_gcal_events)
+# Initialize main app
+app = Bottle()
 
-# Should match valid redirect uris in OAuth client secret files
-run(host='localhost', port=8080, debug=True)
+# Route for creating Google Calendar events
+app.post("/gcal/events", callback=create_gcal_events)
+
+
+if __name__ == '__main__':
+
+    # Should match valid redirect uris in OAuth client secret files
+    run(host='localhost', port=8080, debug=True)

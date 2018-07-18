@@ -19,8 +19,7 @@ class GoogleCalendarApi(object):
     calendar_id = '9bd42tmt32q8sk200sappvmm6s@group.calendar.google.com'
 
     # Location of Google Calendar API service account credentials. This file
-    # specifies the Google Could Platform project (currently calguru-210514)
-    # and the Google service account that CalGuru interfaces with.
+    # specifies the Google service account that CalGuru interfaces with.
     service_account_dir = join(dirname(realpath(__file__)),
                                '../../conf/gcal_service_account.json')
 
@@ -134,9 +133,9 @@ class GoogleCalendarApi(object):
             # Add fields to gcal_event
             for key, value in event_dict.items():
                 if value and key in all_event_fields:
-                    if key is 'attendees':
+                    if key == 'attendees':
                         value = [{'email': email} for email in value]
-                    if key is 'start' or key is 'end':
+                    if key == 'start' or key == 'end':
                         value = {
                             'dateTime': arrow.get(value).isoformat('T'),  # RFC3339 format
                             'timeZone': 'UTC',
