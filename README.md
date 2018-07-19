@@ -20,9 +20,9 @@
         * `summary`: Event summary. Required.
         * `start`: UTC timestamp of event starting time. Required.
         * `end`: UTC timestamp of event ending time. Required.
-        * `attendees` = List of attendee emails.
-        * `description` = Event description.
-        * `location` = Event location.
+        * `attendees`: List of attendee emails.
+        * `description`: Event description.
+        * `location`: Event location.
     * Example input:
         * ```json
             {
@@ -68,6 +68,8 @@
                  }
             }
             ```
+    * For each created event, email invites are sent to the emails in 
+    `attendees`.
 
 ## Google Calendar API Authentication
 * Background: A service account is a special Google account that belongs to an
