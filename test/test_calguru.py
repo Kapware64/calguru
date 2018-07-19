@@ -4,7 +4,7 @@ import unittest
 import arrow
 import calguru
 import bson
-import bson.json_util
+from bson import json_util
 from webtest import TestApp
 from src.api.gcal_api import GoogleCalendarApi
 from test.test_helpers.test_utils import TestUtils
