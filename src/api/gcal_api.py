@@ -65,10 +65,10 @@ class GoogleCalendarApi(object):
         """
 
         # Mandatory fields that need to be specified for each event
-        mandatory_event_fields = ['summary', 'start', 'end']
+        mandatory_event_fields = {'summary', 'start', 'end'}
 
         # All valid event fields supported in batch_create_events
-        all_event_fields = mandatory_event_fields + ['description', 'location', 'attendees']
+        all_event_fields = mandatory_event_fields | {'description', 'location', 'attendees'}
 
         # Resource object for interacting with Google Calendar API
         service = cls.get_service()
@@ -89,7 +89,7 @@ class GoogleCalendarApi(object):
         for event_dict in event_dicts:
 
             # Mandatory event fields aren't all specified for input event dict; raise error
-            if not set(mandatory_event_fields).issubset(set(event_dict.keys())):
+            if not mandatory_event_fields.issubset(set(event_dict.keys())):
                 raise gcal_errors.MissingEventFields(
                     "Mandatory fields (summary, start time, and end time) "
                     "weren't all specified for event.")
@@ -124,7 +124,7 @@ class GoogleCalendarApi(object):
         # single event creation operation before returning)
         batch.execute()
 
-        # Returns created events' _ids, summaries, and links
+        # Returns created events' ids, summaries, and links
         return ret_events_info
 
     @classmethod
@@ -162,3 +162,25 @@ class GoogleCalendarApi(object):
         # Delete event with input event id from Google Calendar
         service.events().delete(calendarId=GoogleCalendarApi.calendar_id,
                                 eventId=id).execute()
+
+    @classmethod
+    def create_calendar(cls, id):
+        """
+        Returns dict containing all information about Google Calendar event with
+        input event id.
+        Returns None if no such event could be found.
+        """
+
+        # Resource object for interacting with Google Calendar API
+        service = cls.get_service()
+
+        try:
+
+            # Retrieve and return event with input event id
+            return service.events().get(
+                calendarId=GoogleCalendarApi.calendar_id,
+                eventId=id).execute()
+        except HttpError:
+
+            # Event with input id couldn't be found; return None
+            return None

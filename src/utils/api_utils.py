@@ -2,7 +2,7 @@
 
 from bottle import response
 import bson
-import bson.json_util
+from bson import json_util
 from src.errors.calguru_error import CalGuruError
 
 
