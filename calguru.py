@@ -21,9 +21,9 @@ def create_gcal_events():
        'summary': Event summary. Required.
        'start': UTC timestamp of event starting time. Required.
        'end': UTC timestamp of event ending time. Required.
-       'attendees' = List of attendee emails.
-       'description' = Event description.
-       'location' = Event location.
+       'attendees': List of attendee emails.
+       'description': Event description.
+       'location': Event location.
     Output: Created events' ids, summaries, and links in json.
     """
 
