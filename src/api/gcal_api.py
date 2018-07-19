@@ -162,25 +162,3 @@ class GoogleCalendarApi(object):
         # Delete event with input event id from Google Calendar
         service.events().delete(calendarId=GoogleCalendarApi.calendar_id,
                                 eventId=id).execute()
-
-    @classmethod
-    def create_calendar(cls, id):
-        """
-        Returns dict containing all information about Google Calendar event with
-        input event id.
-        Returns None if no such event could be found.
-        """
-
-        # Resource object for interacting with Google Calendar API
-        service = cls.get_service()
-
-        try:
-
-            # Retrieve and return event with input event id
-            return service.events().get(
-                calendarId=GoogleCalendarApi.calendar_id,
-                eventId=id).execute()
-        except HttpError:
-
-            # Event with input id couldn't be found; return None
-            return None
