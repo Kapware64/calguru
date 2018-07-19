@@ -1,11 +1,12 @@
 """Google calendar errors."""
 
+from src.errors.calguru_error import CalGuruError
 
-class GoogleCalendarError(Exception):
+
+class GoogleCalendarError(CalGuruError):
     """All google calendar errors."""
 
-    def __init__(self, message):
-        self.message = message
+    pass
 
 
 class InvalidEventTime(GoogleCalendarError):

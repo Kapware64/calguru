@@ -1,5 +1,8 @@
-from bottle import route, run
+"""Main app."""
+
+from bottle import Bottle, route, request
 from src.api.gcal_api import GoogleCalendarApi
+from src.utils.api_utils import APIUtils
 
 
 @route('/')
@@ -9,17 +12,39 @@ def index():
     return "CalGuru"
 
 
-@route('/upcoming')
-def upcoming():
+@APIUtils.api_decorator
+def create_gcal_events():
     """
-    Returns json describing next upcoming event in Google Calendar.
+    Called when endpoint for creating Google Calendar events is invoked.
 
-    Used as simple sanity check for connection to Google Calendar.
-    TODO: Remove before deployment.
+    Content-Type: application/json
+    Input body: Json with "events" field containing Json array of events to be
+    created. Each item in array specifies an event and should follow these keys:
+       "summary": Event summary. Required.
+       "start": UTC timestamp of event starting time. Required.
+       "end": UTC timestamp of event ending time. Required.
+       "attendees": List of attendee emails.
+       "description": Event description.
+       "location": Event location.
+    Output: Created events' ids, summaries, and links in json.
     """
 
-    return GoogleCalendarApi.get_next_event()
+    # Create events and store Google Calendar info of created events
+    gcal_events_info = GoogleCalendarApi.batch_create_events(
+        APIUtils.get_body(request)['events'])
+
+    # Return created events' ids, summaries, and links
+    return {'calendar_events': gcal_events_info}
 
 
-# Should match valid redirect uris in OAuth client secret files
-run(host='localhost', port=8080, debug=True)
+# Initialize main app
+app = Bottle()
+
+# Route for creating Google Calendar events
+app.post("/gcal/events", callback=create_gcal_events)
+
+
+if __name__ == '__main__':
+
+    # Run the application
+    app.run(host='localhost', port=8080)
