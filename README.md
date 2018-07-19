@@ -10,6 +10,65 @@
 * Navigate to project root.
 * Run `nose2 -v`.
 
+## Endpoints
+* Here are CalGuru's currently supported endpoints:
+* `POST /gcal/events`: Creates Google Calendar events.
+    * Content-Type: application/json
+    * Input body: Json with `events` field containing Json array of events
+    to be created. Each item in array specifies an event and should follow these
+    keys:
+        * `summary`: Event summary. Required.
+        * `start`: UTC timestamp of event starting time. Required.
+        * `end`: UTC timestamp of event ending time. Required.
+        * `attendees` = List of attendee emails.
+        * `description` = Event description.
+        * `location` = Event location.
+    * Example input:
+        * ```json
+            {
+                "events": [
+                    {
+                        "summary": "Test 1",
+                        "start": 1532014225,
+                        "end": 1532032225,
+                        "attendees": ["noah.kaplan@mongodb.com"],
+                        "description": "A test event #1",
+                        "location": "MongoDB"
+                    },
+                    {
+                        "summary": "Test 2",
+                        "start": 1532021425,
+                        "end": 1532039425,
+                        "attendees": ["noah.kaplan@mongodb.com"],
+                        "description": "test event #2",
+                        "location": "MongoDB"
+                    }
+                ]
+            }
+            ```
+            
+    * Output: Created events' ids, summaries, and links in json.
+    * Output example:
+        * ```json
+            {
+                "status": "success",
+                "data": {
+                    "calendar_events": [
+                        {
+                            "id": "hau4n5e0r5b149gcq89rur3gms",
+                            "summary": "Test 1",
+                            "link": "<link to event in Google Calendar>"
+                        },
+                        {
+                            "id": "eae5c5e0rfb11fgcq59tx43gmd",
+                            "summary": "Test 2",
+                            "link": "<link to event in Google Calendar>"
+                        }
+                    ]
+                 }
+            }
+            ```
+
 ## Google Calendar API Authentication
 * Background: A service account is a special Google account that belongs to an
     application instead of a user. Each service account is associated with a

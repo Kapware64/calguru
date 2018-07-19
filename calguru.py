@@ -16,8 +16,8 @@ def create_gcal_events():
     Called when endpoint for creating Google Calendar events is invoked.
 
     Content-Type: application/json
-    Input body: Json with 'events' field containing Json array. Each
-    item in array specifies an event and should follow these keys:
+    Input body: Json with 'events' field containing Json array of events to be
+    created. Each item in array specifies an event and should follow these keys:
        'summary': Event summary. Required.
        'start': UTC timestamp of event starting time. Required.
        'end': UTC timestamp of event ending time. Required.
