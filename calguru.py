@@ -45,4 +45,4 @@ app.post("/gcal/events", callback=create_gcal_events)
 if __name__ == '__main__':
 
     # Run the application
-    run(host='localhost', port=8080, debug=True)
+    app.run(host='localhost', port=8080)
