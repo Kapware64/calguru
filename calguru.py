@@ -1,4 +1,6 @@
-from bottle import Bottle, route, run, request
+"""Main app."""
+
+from bottle import Bottle, route, request
 from src.api.gcal_api import GoogleCalendarApi
 from src.utils.api_utils import APIUtils
 
