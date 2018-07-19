@@ -48,15 +48,15 @@ class GoogleCalendarApi(object):
         Creates Google Calendar events and returns list of dicts containing
         events' ids, summaries, and links.
 
-        :param event_dicts: List of dicts, where each dict specifies an event.
-           The following dict keys are supported (keys match Google Calendar API
-           keys for event creation):
+        :param event_dicts: List of dicts, where each dict specifies an event
+           to be created. The following dict keys are supported (keys match
+           Google Calendar API keys for event creation):
            'summary': Event summary. Required.
            'start': UTC timestamp of event starting time. Required.
            'end': UTC timestamp of event ending time. Required.
-           'attendees' = List of attendee emails.
-           'description' = Event description.
-           'location' = Event location.
+           'attendees': List of attendee emails.
+           'description': Event description.
+           'location': Event location.
         :param send_notifications: Boolean specifying whether to send
            notifications about creation of events (includes invitations).
            Defaults to true.
