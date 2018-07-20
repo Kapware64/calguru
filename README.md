@@ -2,6 +2,13 @@
 
 ## Running app
 * Navigate to project root.
+* In the `conf` folder, add the following files:
+    * `gcal_service_account.json`: Contains service account credentials
+    (including private key) for making authenticated requests to Google
+    Calendar API. More information is given below under "Google Calendar
+    API Authentication."
+    * `test_gcal_service_account.json`: Contains service account credentials
+    utilized when testing calls to Google Calendar API.
 * Execute `pip install -r requirements.txt` to install required packages.
 * Execute `python calguru.py` to run app.
 
