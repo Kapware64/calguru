@@ -5,7 +5,6 @@ from src.api.gcal_api import GoogleCalendarApi
 from src.utils.api_utils import APIUtils
 
 
-@route('/')
 def index():
     """Home page."""
 
@@ -40,11 +39,16 @@ def create_gcal_events():
 # Initialize main app
 app = Bottle()
 
+# Route homepage
+app.get("/", callback=index)
+
 # Route for creating Google Calendar events
 app.post("/gcal/events", callback=create_gcal_events)
 
 
 if __name__ == '__main__':
 
-    # Run the application
-    app.run(host='localhost', port=8080)
+    # Run the application from http://192.168.50.1:8080.
+    # Should match scheduling tool's
+    # src/utils/calendar_utils.CalendarUtils.CALGURU_BASE_URL.
+    app.run(host='192.168.50.1', port=8080)
