@@ -1,5 +1,7 @@
 # CalGuru
 
+CalGuru is a REST API that makes authenticated requests to a single specified Google Calendar. It can be used automate Google Calendar batch event creation. CalGuru was developed during a summer internship at MongoDB.
+
 ## Running app
 * Navigate to project root.
 * Create `conf` folder:
