@@ -1,6 +1,6 @@
 """Main app."""
 
-TEST2
+TEST3
 
 from bottle import Bottle, route, request
 from src.api.gcal_api import GoogleCalendarApi
