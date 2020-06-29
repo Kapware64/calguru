@@ -1,5 +1,7 @@
 """Main app."""
 
+TEST
+
 from bottle import Bottle, route, request
 from src.api.gcal_api import GoogleCalendarApi
 from src.utils.api_utils import APIUtils
